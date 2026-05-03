@@ -42,7 +42,7 @@ ACTUAL_RESULTS = {
     "West_R2_2": {"team1": "SAS", "team2": "MIN", "team1_wins": 0, "team2_wins": 0}, 
     "West_CF":   None, 
     "East_R2_1": None, 
-    "East_R2_2": {"team1": "PHI", "team2": "NYK", "team1_wins": 2, "team2_wins": 4}, 
+    "East_R2_2": {"team1": "PHI", "team2": "NYK", "team1_wins": 0, "team2_wins": 0}, 
     "East_CF":   None, 
     "CHAMPION":  None  
 }
