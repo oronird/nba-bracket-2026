@@ -47,6 +47,17 @@ ACTUAL_RESULTS = {
     "CHAMPION":  None  
 }
 
+# Helper to find all teams that have lost a series
+def get_eliminated_teams(actual_results):
+    eliminated = set()
+    for state in actual_results.values():
+        if state is not None:
+            if state["team1_wins"] == 4:
+                eliminated.add(state["team2"])
+            elif state["team2_wins"] == 4:
+                eliminated.add(state["team1"])
+    return eliminated
+
 # ==========================================
 # 3. SCORING SYSTEM & LOGIC
 # ==========================================
@@ -78,7 +89,11 @@ def get_possible_scores(predicted, t1, w1, t2, w2, round_type):
     scores.extend(get_possible_scores(predicted, t1, w1, t2, w2 + 1, round_type))
     return scores
 
-def score_matchup(predicted, state, round_type):
+def score_matchup(predicted, state, round_type, eliminated_teams):
+    # If the team they picked is already dead, they get 0 potential points
+    if predicted["winner"] in eliminated_teams:
+        return 0, 0
+
     if state is None:
         return 0, POINTS_PER_ROUND[round_type] + 10
         
@@ -96,7 +111,7 @@ def score_matchup(predicted, state, round_type):
     possible_scores = get_possible_scores(predicted, t1, w1, t2, w2, round_type)
     return 0, max(possible_scores)
 
-def score_full_bracket(player_name, player_bracket, actual_results):
+def score_full_bracket(player_name, player_bracket, actual_results, eliminated_teams):
     current_total = PLAYIN_POINTS.get(player_name, 0)
     potential_total = PLAYIN_POINTS.get(player_name, 0)
     
@@ -107,7 +122,7 @@ def score_full_bracket(player_name, player_bracket, actual_results):
         else: round_type = "CHAMPION"
             
         state = actual_results.get(matchup_key)
-        realized, potential = score_matchup(predicted_data, state, round_type)
+        realized, potential = score_matchup(predicted_data, state, round_type, eliminated_teams)
         
         current_total += realized
         potential_total += potential
@@ -147,14 +162,13 @@ players = [
 # ==========================================
 # 5. UI HELPER: MATCHUP CARD RENDERING
 # ==========================================
-def render_matchup_card(match_key, pick_data, state, round_type):
-    realized, potential = score_matchup(pick_data, state, round_type)
+def render_matchup_card(match_key, pick_data, state, round_type, eliminated_teams):
+    realized, potential = score_matchup(pick_data, state, round_type, eliminated_teams)
     
     # Defaults
     bg_color = "#1E1E1E" # Dark Gray
     border_color = "#333"
     text_color = "#FFF"
-    status_text = "Pending"
     actual_str = "TBD vs TBD"
     pts_str = f"⏳ Pot: {potential}"
 
@@ -181,6 +195,13 @@ def render_matchup_card(match_key, pick_data, state, round_type):
             border_color = "#0056b3"
             text_color = "#cce5ff"
             pts_str = f"🔄 Max: {potential}"
+    else:
+        # Series hasn't started, BUT their picked team is already eliminated
+        if potential == 0:
+            bg_color = "#3a1416" # Dark Red
+            border_color = "#dc3545"
+            text_color = "#f8d7da"
+            pts_str = f"❌ 0 pts"
 
     pick_str = f"{pick_data['winner']} in {pick_data['games']}"
     title_str = match_key.replace('_', ' ')
@@ -205,10 +226,13 @@ def render_matchup_card(match_key, pick_data, state, round_type):
 st.title("🏆 Yom Habocher - Playoff Bracket 2026")
 st.markdown("**Includes Play-in points + Live 'Potential Points' tracker!**")
 
+# Get list of teams that have been knocked out
+eliminated_teams = get_eliminated_teams(ACTUAL_RESULTS)
+
 # Calculate scores
 leaderboard_data = []
 for p in players:
-    current_pts, potential_pts = score_full_bracket(p["name"], p["picks"], ACTUAL_RESULTS)
+    current_pts, potential_pts = score_full_bracket(p["name"], p["picks"], ACTUAL_RESULTS, eliminated_teams)
     champ_pick = p["picks"]["CHAMPION"]["winner"]
     playin = PLAYIN_POINTS.get(p["name"], 0)
     
@@ -243,31 +267,31 @@ for p in players:
             st.markdown("<h3 style='text-align: center; color: #4b89ff;'>🔵 EASTERN CONFERENCE</h3>", unsafe_allow_html=True)
             st.markdown("#### Round 1")
             for key in ["East_R1_1", "East_R1_2", "East_R1_3", "East_R1_4"]:
-                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R1")
+                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R1", eliminated_teams)
                 
             st.markdown("#### Conference Semifinals")
             for key in ["East_R2_1", "East_R2_2"]:
-                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R2")
+                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R2", eliminated_teams)
                 
             st.markdown("#### Conference Finals")
-            render_matchup_card("East_CF", p["picks"]["East_CF"], ACTUAL_RESULTS["East_CF"], "CF")
+            render_matchup_card("East_CF", p["picks"]["East_CF"], ACTUAL_RESULTS["East_CF"], "CF", eliminated_teams)
 
         with col_west:
             st.markdown("<h3 style='text-align: center; color: #ff4b4b;'>🔴 WESTERN CONFERENCE</h3>", unsafe_allow_html=True)
             st.markdown("#### Round 1")
             for key in ["West_R1_1", "West_R1_2", "West_R1_3", "West_R1_4"]:
-                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R1")
+                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R1", eliminated_teams)
                 
             st.markdown("#### Conference Semifinals")
             for key in ["West_R2_1", "West_R2_2"]:
-                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R2")
+                render_matchup_card(key, p["picks"][key], ACTUAL_RESULTS[key], "R2", eliminated_teams)
                 
             st.markdown("#### Conference Finals")
-            render_matchup_card("West_CF", p["picks"]["West_CF"], ACTUAL_RESULTS["West_CF"], "CF")
+            render_matchup_card("West_CF", p["picks"]["West_CF"], ACTUAL_RESULTS["West_CF"], "CF", eliminated_teams)
             
         # Champion Section at the bottom centered
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; color: #FFD700;'>🏆 NBA FINALS 🏆</h3>", unsafe_allow_html=True)
         col_spacer1, col_champ, col_spacer2 = st.columns([1, 2, 1])
         with col_champ:
-            render_matchup_card("CHAMPION", p["picks"]["CHAMPION"], ACTUAL_RESULTS["CHAMPION"], "CHAMPION")
+            render_matchup_card("CHAMPION", p["picks"]["CHAMPION"], ACTUAL_RESULTS["CHAMPION"], "CHAMPION", eliminated_teams)
