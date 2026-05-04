@@ -32,8 +32,8 @@ ACTUAL_RESULTS = {
     "West_R1_4": {"team1": "SAS", "team2": "POR", "team1_wins": 4, "team2_wins": 1},
     
     # EAST ROUND 1
-    "East_R1_1": {"team1": "DET", "team2": "ORL", "team1_wins": 3, "team2_wins": 3},
-    "East_R1_2": {"team1": "CLE", "team2": "TOR", "team1_wins": 3, "team2_wins": 3},
+    "East_R1_1": {"team1": "DET", "team2": "ORL", "team1_wins": 4, "team2_wins": 3},
+    "East_R1_2": {"team1": "CLE", "team2": "TOR", "team1_wins": 4, "team2_wins": 3},
     "East_R1_3": {"team1": "NYK", "team2": "ATL", "team1_wins": 4, "team2_wins": 2},
     "East_R1_4": {"team1": "BOS", "team2": "PHI", "team1_wins": 2, "team2_wins": 4},
     
@@ -41,7 +41,7 @@ ACTUAL_RESULTS = {
     "West_R2_1": {"team1": "OKC", "team2": "LAL", "team1_wins": 0, "team2_wins": 0}, 
     "West_R2_2": {"team1": "SAS", "team2": "MIN", "team1_wins": 0, "team2_wins": 0}, 
     "West_CF":   None, 
-    "East_R2_1": None, 
+    "East_R2_1": {"team1": "DET", "team2": "CLE", "team1_wins": 0, "team2_wins": 0}, 
     "East_R2_2": {"team1": "PHI", "team2": "NYK", "team1_wins": 0, "team2_wins": 0}, 
     "East_CF":   None, 
     "CHAMPION":  None  
