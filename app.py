@@ -160,7 +160,9 @@ players = [
     {"name": "Youval", "picks": build_picks([("OKC", 5), ("HOU", 5), ("DEN", 7), ("SAS", 4)], [("OKC", 5), ("DEN", 7)], ("OKC", 5), [("DET", 5), ("TOR", 6), ("NYK", 7), ("BOS", 5)], [("DET", 5), ("BOS", 5)], ("DET", 7), ("OKC", 7))},
     {"name": "Ofer", "picks": build_picks([("OKC", 4), ("HOU", 6), ("DEN", 5), ("POR", 7)], [("OKC", 4), ("DEN", 5)], ("OKC", 6), [("DET", 5), ("CLE", 5), ("NYK", 6), ("BOS", 4)], [("DET", 7), ("BOS", 5)], ("BOS", 6), ("OKC", 6))},
     {"name": "Siton", "picks": build_picks([("OKC", 4), ("HOU", 6), ("DEN", 6), ("SAS", 4)], [("OKC", 4), ("DEN", 7)], ("OKC", 7), [("DET", 7), ("CLE", 6), ("NYK", 5), ("BOS", 4)], [("CLE", 6), ("BOS", 6)], ("BOS", 5), ("OKC", 7))},
-    {"name": "Raz", "picks": build_picks([("OKC", 4), ("HOU", 6), ("DEN", 6), ("SAS", 4)], [("OKC", 4), ("DEN", 7)], ("OKC", 7), [("DET", 7), ("CLE", 6), ("NYK", 5), ("BOS", 4)], [("CLE", 6), ("BOS", 6)], ("BOS", 5), ("OKC", 6))}, 
+    
+    {"name": "Raz", "picks": build_picks([("OKC", 4), ("HOU", 6), ("DEN", 7), ("SAS", 5)], [("OKC", 5), ("SAS", 6)], ("SAS", 7), [("DET", 4), ("CLE", 6), ("NYK", 6), ("BOS", 6)], [("DET", 7), ("BOS", 6)], ("BOS", 7), ("SAS", 6))}, 
+    
     {"name": "Ori", "picks": build_picks([("OKC", 6), ("HOU", 5), ("DEN", 7), ("SAS", 5)], [("OKC", 7), ("SAS", 6)], ("SAS", 7), [("DET", 5), ("CLE", 7), ("NYK", 5), ("BOS", 5)], [("CLE", 6), ("NYK", 6)], ("NYK", 7), ("SAS", 5))},
     {"name": "Nadav", "picks": build_picks([("OKC", 4), ("HOU", 6), ("DEN", 7), ("SAS", 7)], [("OKC", 5), ("DEN", 6)], ("DEN", 6), [("DET", 4), ("CLE", 4), ("NYK", 5), ("BOS", 5)], [("CLE", 7), ("BOS", 5)], ("BOS", 7), ("DEN", 6))},
     {"name": "Elad Klein", "picks": build_picks([("OKC", 5), ("HOU", 6), ("DEN", 7), ("SAS", 5)], [("OKC", 6), ("SAS", 6)], ("SAS", 6), [("DET", 5), ("CLE", 5), ("NYK", 6), ("BOS", 6)], [("DET", 5), ("NYK", 6)], ("DET", 6), ("SAS", 6))},
