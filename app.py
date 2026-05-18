@@ -32,9 +32,9 @@ ACTUAL_RESULTS = {
     "West_R2_1": {"team1": "OKC", "team2": "LAL", "team1_wins": 4, "team2_wins": 0}, 
     "West_R2_2": {"team1": "SAS", "team2": "MIN", "team1_wins": 4, "team2_wins": 2}, 
     "West_CF":   {"team1": "OKC", "team2": "SAS", "team1_wins": 0, "team2_wins": 0}, 
-    "East_R2_1": {"team1": "DET", "team2": "CLE", "team1_wins": 3, "team2_wins": 3}, 
+    "East_R2_1": {"team1": "DET", "team2": "CLE", "team1_wins": 3, "team2_wins": 4}, 
     "East_R2_2": {"team1": "PHI", "team2": "NYK", "team1_wins": 0, "team2_wins": 4}, 
-    "East_CF":   None, 
+    "East_CF":   {"team1": "CLE", "team2": "NYK", "team1_wins": 0, "team2_wins": 0}, 
     "CHAMPION":  None  
 }
 
@@ -54,7 +54,7 @@ def get_eliminated_teams(actual_results):
     return eliminated
 
 # ==========================================
-# 3. SCORING SYSTEM & LOGIC (UPDATED RULE)
+# 3. SCORING SYSTEM & LOGIC (FIXED GRAVEYARD)
 # ==========================================
 POINTS_PER_ROUND = {'R1': 10, 'R2': 20, 'CF': 30, 'CHAMPION': 50}
 
@@ -69,6 +69,10 @@ def calculate_finished_score(predicted, actual_winner, actual_games, round_type,
             games_diff = abs(predicted["games"] - actual_games)
             if games_diff == 0: score += 10
             elif games_diff == 1: score += 5
+    else:
+        # 3. GAME 7 EXCEPTION: Predicted A in 7, but B won in 7 (Only if matchup was perfectly correct)
+        if is_matchup_correct and predicted["games"] == 7 and actual_games == 7:
+            score += 5
             
     return score
 
@@ -82,10 +86,6 @@ def get_possible_scores(predicted, t1, w1, t2, w2, round_type, is_matchup_correc
     return scores
 
 def score_matchup(match_key, pick_data, all_player_picks, state, round_type, eliminated_teams):
-    # Dead team check
-    if pick_data["winner"] in eliminated_teams:
-        return 0, 0
-
     # Figure out what matchup the player PREDICTED would happen
     if "R1" in match_key:
         predicted_teams = {state["team1"], state["team2"]} if state else set()
@@ -94,21 +94,29 @@ def score_matchup(match_key, pick_data, all_player_picks, state, round_type, eli
         predicted_teams = {all_player_picks[src1]["winner"], all_player_picks[src2]["winner"]}
 
     if state is None:
-        # Round hasn't started. Max potential assumes their dream scenario happens exactly.
+        # Round hasn't started. 
+        # Check graveyard: If the team they picked is already dead, they get 0 potential points
+        if pick_data["winner"] in eliminated_teams:
+            return 0, 0
+        # If any team they expected to be in this matchup is eliminated, they can't get exact matchup bonuses
+        if any(team in eliminated_teams for team in predicted_teams):
+            return 0, POINTS_PER_ROUND[round_type]
         return 0, POINTS_PER_ROUND[round_type] + 10
         
     t1, t2 = state["team1"], state["team2"]
     w1, w2 = state["team1_wins"], state["team2_wins"]
     actual_teams = {t1, t2}
     
-    # NEW RULE: Is the matchup exactly what they thought it would be?
+    # Are the two teams currently playing exactly the two teams they predicted?
     is_matchup_correct = (predicted_teams == actual_teams)
     
     if w1 == 4 or w2 == 4:
+        # Series is FINISHED. Grade it purely on what happened, ignoring the graveyard.
         winner = t1 if w1 == 4 else t2
         final_score = calculate_finished_score(pick_data, winner, w1 + w2, round_type, is_matchup_correct)
         return final_score, final_score
         
+    # Series is IN PROGRESS. If the team they picked isn't playing in this actual matchup, they get 0.
     if pick_data["winner"] not in actual_teams:
         return 0, 0 
         
