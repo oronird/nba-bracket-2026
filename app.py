@@ -31,11 +31,11 @@ ACTUAL_RESULTS = {
     # FUTURE ROUNDS
     "West_R2_1": {"team1": "OKC", "team2": "LAL", "team1_wins": 4, "team2_wins": 0}, 
     "West_R2_2": {"team1": "SAS", "team2": "MIN", "team1_wins": 4, "team2_wins": 2}, 
-    "West_CF":   {"team1": "OKC", "team2": "SAS", "team1_wins": 0, "team2_wins": 0}, 
+    "West_CF":   {"team1": "OKC", "team2": "SAS", "team1_wins": 3, "team2_wins": 4}, 
     "East_R2_1": {"team1": "DET", "team2": "CLE", "team1_wins": 3, "team2_wins": 4}, 
     "East_R2_2": {"team1": "PHI", "team2": "NYK", "team1_wins": 0, "team2_wins": 4}, 
-    "East_CF":   {"team1": "CLE", "team2": "NYK", "team1_wins": 0, "team2_wins": 0}, 
-    "CHAMPION":  None  
+    "East_CF":   {"team1": "CLE", "team2": "NYK", "team1_wins": 0, "team2_wins": 4}, 
+    "CHAMPION":  {"team1": "SAS", "team2": "NYK", "team1_wins": 0, "team2_wins": 0}  
 }
 
 BRACKET_STRUCTURE = {
